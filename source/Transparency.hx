@@ -1,5 +1,6 @@
 package;
 
+#if windows
 import cpp.*;
 
 @:native("HWND__") extern class HWNDStruct {}
@@ -15,8 +16,10 @@ typedef COLORREF = DWORD;
     #include <hxcpp.h>
     #include <iostream>
 ")
+#end
 class Transparency
 {
+	#if windows
 	public static var win:HWND;
 	private static var winStyle:LONG;
 	private static var winExStyle:LONG;
@@ -40,9 +43,11 @@ class Transparency
 	@:native("GetLastError") @:extern
 	private static function getLastError():DWORD
 		return null;
+	#end
 
 	public static function setTransparency(winName:String, color:Int):Void
 	{
+		#if windows
 		win = findWindow(null, winName);
 		if (win == null)
 		{
@@ -75,6 +80,7 @@ class Transparency
 			trace("Error setting color key on window!");
 			trace("Code: " + Std.string(getLastError()));
 		}
+		#end
 	}
 
 	public static function reset():Void

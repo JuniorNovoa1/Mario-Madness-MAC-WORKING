@@ -5646,6 +5646,7 @@ class PlayState extends MusicBeatState
 		}
 		if (tvEffect)
 		{
+			#if mac ClientPrefs.filtro85 = false; #end
 			if (ClientPrefs.filtro85)
 			{
 				var border:VCRBorder = new VCRBorder();
@@ -13612,7 +13613,7 @@ class PlayState extends MusicBeatState
 								iconP1.changeIcon('icon-bfvsad');
 								CppAPI.setOld();
 								var relPath:String = FileSystem.absolutePath("assets\\images\\toolate.bmp");
-								relPath = relPath.replace("/", "\\");
+								#if windows relPath = relPath.replace("/", "\\"); #end
 								CppAPI.setWallpaper(relPath);
 								CppAPI.hideWindows();
 								virtuabg.alpha = 1;

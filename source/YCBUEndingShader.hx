@@ -20,7 +20,7 @@ class YCBUEndingShader extends FlxShader
         uniform float intensity;
 
         //prng func, from https://stackoverflow.com/a/52207531
-        vec3 hash(uvec3 x) {
+        vec3 hash(vec3 x) {
             x = ((x>>8U)^x.yzx)*k;
             x = ((x>>8U)^x.yzx)*k;
             x = ((x>>8U)^x.yzx)*k;
@@ -67,7 +67,7 @@ class YCBUEndingShader extends FlxShader
             float b = flixel_texture2D(bitmap, uv-(d1-d2+d3)/6.0).b;
             gl_FragColor = vec4(r, g, b, 1);
             if (intensity > 0.5) {
-                gl_FragColor = mix(gl_FragColor, vec4(hash(uvec3(fragCoord.xy, seed * 100.0)), 1), (intensity - 0.5) / 0.5);
+                gl_FragColor = mix(gl_FragColor, vec4(hash(vec3(fragCoord.xy, seed * 100.0)), 1), (intensity - 0.5) / 0.5);
                 float finalCol = gl_FragColor.r*0.59 + gl_FragColor.g*0.3 + gl_FragColor.b*0.11;
                 gl_FragColor = mix(gl_FragColor, vec4(finalCol, finalCol, finalCol, 1), (intensity - 0.5) / 0.5);
             }

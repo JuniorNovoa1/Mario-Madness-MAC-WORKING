@@ -49,7 +49,7 @@ class WindowsData
 
 		return (allocatedRAM / 1024);
 	")
-	#elseif linux
+	#else
 	@:functionCode('
 		FILE *meminfo = fopen("/proc/meminfo", "r");
 
@@ -94,10 +94,12 @@ class WindowsData
 
 	// ! MUST CALL THIS BEFORE restoreTaskbar
 
+	#end
 	public static function hideTaskbar()
 	{
-		taskbarWasVisible = _hideTaskbar();
+		#if windows taskbarWasVisible = _hideTaskbar(); #end
 	}
+	#if windows
 
 	@:functionCode('
 		if (!static_cast<bool>(wasVisible)) {
@@ -112,10 +114,12 @@ class WindowsData
 	')
 	private static function _restoreTaskbar(wasVisible:Int) {}
 
+	#end
 	public static function restoreTaskbar()
 	{
-		_restoreTaskbar(taskbarWasVisible);
+		#if windows _restoreTaskbar(taskbarWasVisible); #end
 	}
+	#if windows
 
 	// from atpx8: ughhhhhhhhhhhhhhhhhhhhhhhhh this is gonna suck to code isnt it
 	// from future atpx8: it did in fact kinda suck to code
@@ -139,10 +143,12 @@ class WindowsData
 
 	// ! MUST CALL THIS BEFORE restoreWindows()
 
+	#end
 	public static function hideWindows()
 	{
-		wereHidden = _hideWindows(openfl.Lib.application.window.title);
+		#if windows wereHidden = _hideWindows(openfl.Lib.application.window.title); #end
 	}
+	#if windows
 
 	@:functionCode('
 		for (int i = 0; i < sizeHidden; i++) {
@@ -154,10 +160,12 @@ class WindowsData
 	')
 	private static function _restoreWindows(prevHidden:Array<String>, sizeHidden:Int) {}
 
+	#end
 	public static function restoreWindows()
 	{
-		_restoreWindows(wereHidden, wereHidden.length);
+		#if windows _restoreWindows(wereHidden, wereHidden.length); #end
 	}
+	#if windows
 
 	@:functionCode('
         int darkMode = mode;
@@ -170,6 +178,7 @@ class WindowsData
 	@:noCompletion
 	public static function _setWindowColorMode(mode:Int) {}
 
+	#end
 	public static function setWindowColorMode(mode:WindowColorMode)
 	{
 		var darkMode:Int = cast(mode, Int);
@@ -181,9 +190,10 @@ class WindowsData
 			return;
 		}
 
-		_setWindowColorMode(darkMode);
+		#if windows _setWindowColorMode(darkMode); #end
 	}
 
+	#if windows
 	@:functionCode('
 	HWND window = GetActiveWindow();
 	// Remove the WS_SYSMENU style
@@ -192,14 +202,18 @@ class WindowsData
     // Force the window to redraw
     SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 	')
+	#end
 	public static function removeWindowIcon() {}
+	#if windows
 
 	@:functionCode('
 	HWND window = GetActiveWindow();
 	SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) ^ WS_EX_LAYERED);
 	')
 	@:noCompletion
+	#end
 	public static function _setWindowLayered() {}
+	#if windows
 
 	@:functionCode('
         HWND window = GetActiveWindow();
@@ -221,14 +235,16 @@ class WindowsData
 	 * ! MAKE SURE TO CALL CppAPI._setWindowLayered(); BEFORE RUNNING THIS
 	 * @param alpha 
 	 */
+	#end
 	public static function setWindowAlpha(alpha:Float)
 	{
-		return alpha;
+		#if windows return alpha; #end
 	}
+	#if windows
 
 	@:functionCode('SetProcessDPIAware();')
-	public static function registerHighDpi() {}
 	#end
+	public static function registerHighDpi() {}
 }
 
 @:enum abstract WindowColorMode(Int)

@@ -1725,7 +1725,7 @@ class WorldState extends MusicBeatSubstate
 		var newPos:Int = FlxG.random.int(0, 6);
 		var fishTimer:Float = FlxG.random.int(6, 10);
 
-		if(bgworld2.x == fishPos[newPos].x){
+		if(bgworld2.x == fishPos[newPos][0]){
 			fish();
 			return;
 		}
