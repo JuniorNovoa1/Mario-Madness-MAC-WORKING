@@ -23,7 +23,9 @@ import flixel.util.FlxColor;
 import haxe.ValueException;
 import lime.utils.Assets;
 import openfl.filters.ShaderFilter;
+#if sys
 import sys.io.File;
+#end
 
 using StringTools;
 
@@ -57,7 +59,9 @@ class PatchNotes extends MusicBeatState
 		#end
 		FlxG.mouse.visible = true;
 
+		#if desktop
 		FlxG.camera.setFilters([new ShaderFilter(ntsc = new NTSCGlitch(0.4)), new ShaderFilter(staticShader = new TVStatic())]);
+		#end
 
 		bg = new FlxSprite(0, 0).loadGraphic(Paths.image('mainmenu/Patch/patch0'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -229,7 +233,7 @@ class PatchNotes extends MusicBeatState
 	function changePatchNotes(ver:Int) {
 
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-		noteText.text = File.getContent(Paths.txt('Patchs/' + ver));
+		noteText.text = Assets.getText(Paths.txt('Patchs/' + ver));
 		noteText.visible = true;
 		noteText.y = 30;
 		pageBar.visible = true;

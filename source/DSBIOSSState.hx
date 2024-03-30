@@ -82,7 +82,11 @@ class DSBIOSSState extends FlxState
 
 		if (FlxG.save.data.dbuser == null)
 		{
+			#if sys
 			FlxG.save.data.dbuser = Sys.getEnv("username").substr(0, 10);
+			#else
+			FlxG.save.data.dbuser = "HTML5_User"
+			#emd
 		}
 
 		state = DSState.Welcome;

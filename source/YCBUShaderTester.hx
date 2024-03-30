@@ -21,12 +21,16 @@ class YCBUShaderTester extends MusicBeatState
 		var vcr:VCRMario85 = new VCRMario85();
 
 		cam = new FlxCamera(0, 0, 1280, 720);
+		#if desktop
 		cam.setFilters([new ShaderFilter(vcr), new ShaderFilter(shader), new ShaderFilter(border)]);
+		#end
 		FlxG.cameras.add(cam);
 
 		cam2 = new FlxCamera(0, 0, 1280, 720);
 		cam2.bgColor.alpha = 0;
+		#if desktop
 		cam2.setFilters([new ShaderFilter(vcr), new ShaderFilter(shader), new ShaderFilter(border)]);
+		#end
 		FlxG.cameras.add(cam2);
 
 		testImage = new FlxSprite(0, 0).loadGraphic(Paths.image('testimage'));

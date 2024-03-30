@@ -151,6 +151,7 @@ class TitleState extends MusicBeatState {
 
 		Conductor.changeBPM(45.593);
 
+		#if desktop
 		bloom = new BloomShader();
 		bloom.Size.value = [3.0];
 
@@ -158,6 +159,7 @@ class TitleState extends MusicBeatState {
 		@:privateAccess var shadersButCooler:Array<BitmapFilter> = [for (shader in camHUD._filters) shader]; // W NAMING!!!!
 		shadersButCooler.push(new ShaderFilter(staticShader = new TVStatic()));
 		FlxG.camera.setFilters(shadersButCooler);
+		#end
 
 		blackSprite = new FlxSprite().makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
 		blackSprite.updateHitbox();
@@ -385,7 +387,7 @@ class TitleState extends MusicBeatState {
 							startDelay: 0.04,
 							onComplete: (_) -> {
 								FlxG.updateFramerate = 30; // Makes it smoother and consistant
-
+								#if cpp
 								windowRes = FlxPoint.get(Lib.application.window.width, Lib.application.window.height);
 								windowPos = CoolUtil.getCenterWindowPoint();
 								startTime = Sys.time();
@@ -402,6 +404,9 @@ class TitleState extends MusicBeatState {
 										completeWindowTwn();
 									}
 								});
+								#else
+								completeWindowTwn();
+								#end
 
 								FlxG.camera.visible = false;
 								camHUD.visible = false;
@@ -417,6 +422,7 @@ class TitleState extends MusicBeatState {
 
 	function completeWindowTwn(){
 		FlxG.updateFramerate = ClientPrefs.framerate;
+		#if desktop
 		BaseScaleMode.ogSize = FlxPoint.get(1280, 720); // fuck you haxeflixel
 
 		FlxG.scaleMode = new flixel.system.scaleModes.RatioScaleMode();
@@ -427,6 +433,10 @@ class TitleState extends MusicBeatState {
 		
 		windowPos.put(); windowPos.put(); baseCamPos.put();
 
+		#else
+		FlxG.resizeWindow(1280, 720);
+		FlxG.resizeGame(1280, 720);
+		#end
 		FlxG.mouse.visible = true;
 		MusicBeatState.switchState(new MainMenuState());
 	};

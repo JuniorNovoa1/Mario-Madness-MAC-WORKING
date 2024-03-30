@@ -1,7 +1,10 @@
 package;
 
-import sys.io.Process;
+
+#if sys
 import sys.FileSystem;
+import sys.io.Process;
+#end
 
 #if windows
 @:headerCode('

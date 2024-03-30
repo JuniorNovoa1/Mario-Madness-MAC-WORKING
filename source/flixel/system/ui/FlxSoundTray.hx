@@ -48,10 +48,10 @@ class FlxSoundTray extends Sprite
 	var _defaultScale:Float = 2.0;
 
 	/**The sound used when increasing the volume.**/
-	public var volumeUpSound:String = "assets/sounds/volume";
+	public var volumeUpSound:String = "volume";
 
 	/**The sound used when decreasing the volume.**/
-	public var volumeDownSound:String = 'assets/sounds/volume';
+	public var volumeDownSound:String = 'volume';
 
 	/**Whether or not changing the volume should make noise.**/
 	public var silent:Bool = false;
@@ -158,7 +158,7 @@ class FlxSoundTray extends Sprite
 	{
 		if (!silent)
 		{
-			var sound = FlxAssets.getSound(up ? volumeUpSound : volumeDownSound);
+			var sound = Assets.getSound(Paths.sound(up ? volumeUpSound : volumeDownSound));
 			if (sound != null)
 				FlxG.sound.load(sound).play();
 		}

@@ -324,8 +324,10 @@ class WarpState extends MusicBeatState
 		pibemapa.animation.play('idle');
 		screenText.text = canciones[curSelected][0].toUpperCase();
 
+		#if desktop
 		vcr = new CRTShader();
 		FlxG.camera.setFilters([new ShaderFilter(vcr)]);
+		#end
 
 		if(PlayState.isWarp && !startCut) goToWorld();
 		if(pipeCut) openSubState(new PipeState());
@@ -1106,9 +1108,11 @@ class WorldState extends MusicBeatSubstate
 				
 
 
+		#if desktop
 		effect = new SMWPixelBlurShader();
 		vcr = new CRTShader();
 		camWorld.setFilters([new ShaderFilter(effect.shader), new ShaderFilter(vcr)]);
+		#end
 
 		for (i in 0...5)
 			{

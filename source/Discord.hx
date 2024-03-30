@@ -1,6 +1,8 @@
 package;
 
+#if sys
 import Sys.sleep;
+#end
 import discord_rpc.DiscordRpc;
 
 using StringTools;
@@ -71,10 +73,12 @@ class DiscordClient
 
 	public static function initialize()
 	{
+		#if sys
 		var DiscordDaemon = sys.thread.Thread.create(() ->
 		{
 			new DiscordClient();
 		});
+		#end
 		trace("Discord Client initialized");
 	}
 

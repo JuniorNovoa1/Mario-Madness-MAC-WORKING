@@ -32,8 +32,10 @@ import lime.graphics.Image;
 import openfl.Lib;
 import openfl.filters.ShaderFilter;
 import openfl.ui.Mouse;
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
 
 using StringTools;
 
@@ -161,7 +163,9 @@ class MainMenuState extends MusicBeatState {
 			win.resizable = true;
 		}
 		
+		#if desktop
 		Lib.application.window.resizable = lime._internal.backend.native.NativeApplication.fullscreenable = true;
+		#end
 
 		if(FlxG.sound.music == null){
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
@@ -203,9 +207,11 @@ class MainMenuState extends MusicBeatState {
 
 		FlxG.camera.pixelPerfectRender = false;
 
+		#if desktop
 		bloom = new BloomShader();
 		bloom.Size.value = [1];
 		FlxG.camera.setFilters([new ShaderFilter(ntsc = new NTSCGlitch(0.4)), new ShaderFilter(bloom)]);
+		#end
 
 		var stagenumb:Int = ClientPrefs.menuBG - 1;
 
@@ -528,6 +534,8 @@ class MainMenuState extends MusicBeatState {
 				// i think we need to do stuff here? not sure
 				trace(typin);
 				switch(typin){
+
+					#if VIDEOS_ALLOWED
 					case 'garlic':
 						typin = '';
 						canselectshit = false;
@@ -539,9 +547,11 @@ class MainMenuState extends MusicBeatState {
 						canselectshit = false;
 
 						FlxG.sound.music.pause();
-						openSubState(new VideoSubState('V3'));			
+						openSubState(new VideoSubState('V3'));		
+					#end	
 					case 'peepy':
 						CoolUtil.browserLoad('https://itemlabel.com/products/peepy');
+					#if VIDEOS_ALLOWED
 					case 'natetdom':
 						typin = '';
 						canselectshit = false;
@@ -560,6 +570,7 @@ class MainMenuState extends MusicBeatState {
 
 						FlxG.sound.music.pause();
 						openSubState(new VideoSubState('scrubb'));
+					#end
 				}
 			}
 
@@ -654,6 +665,7 @@ class MainMenuState extends MusicBeatState {
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 
 		if (ClientPrefs.flashing && bloom != null) {
+			#if desktop
 			bloom.Size.value = [45];
 			bloom.dim.value = [0.3];
 
@@ -671,6 +683,7 @@ class MainMenuState extends MusicBeatState {
 					bloom.dim.value = [twn2.value];
 				}
 			});
+			#end
 		}
 
 		for (star in stars) {
@@ -786,7 +799,9 @@ class MainMenuState extends MusicBeatState {
 			star.x = Math.PI + (star.width * 1.25); star.alpha = 0; // TO STOP STUPID FUCKING GLITCH
 			FlxTween.tween(star, {x: star.x - (star.width * 1.25), alpha: 1}, 0.4, {ease: FlxEase.circOut, startDelay: 0.1 + (0.1 * star.ID)});
 		}
+		#if desktop
 		FlxG.camera.setFilters([new ShaderFilter(ntsc), new ShaderFilter(bloom)]);
+		#end
 
 		for (spr in [fondo11, estatica]) {
 			if (spr.alpha >= 0.99) return;
@@ -1000,9 +1015,11 @@ class MainMenuState extends MusicBeatState {
 		});
 		
 		if (penkStage == 0) {
+			#if sys
 			for (file in FileSystem.readDirectory("assets/images/eastereggs/penk")) 
 				if (Path.extension(file) == "png") penkImageList.push(Path.withoutExtension(file));
 			tempImageList = penkImageList.copy();
+			#end
 		}
 
 		for (i in 0...((penkStage+1)+FlxG.random.int(0, (2 * Std.int(penkStage/4))))) {
@@ -1020,101 +1037,15 @@ class MainMenuState extends MusicBeatState {
 			(new FlxTimer()).start(i*0.1, (_) -> FlxG.sound.play(Paths.sound("vineboom"), FlxG.random.float(0.8, 1)));
 		}
 
-		if (penkStage == 4) {
-			selectedSomethin = true;
-			new FlxTimer().start(.4, (_) -> {
-				FlxG.sound.play(Paths.sound('riser'), 1);
-				
-				var twn1:NumTween;
-				var twn2:NumTween;
-		
-				twn1 = FlxTween.num(1, 2, 2, {
-					onUpdate: (_) -> {
-						bloom.Size.value = [twn1.value];
-					}
-				});
-		
-				twn2 = FlxTween.num(2.0, 0.1, 2, {
-					onUpdate: (_) -> {
-						bloom.dim.value = [twn2.value];
-					}
-				});
-		
-				for (i in 0...10){
-					new FlxTimer().start(0.2 * i, function(tmr:FlxTimer)
-						{
-							FlxG.camera.shake(0.0006 * i, 0.2);
-						});
-				}
-				lerpCamZoom = false;
-				FlxTween.tween(FlxG.camera, {zoom: 1.6}, 2, {ease: FlxEase.circIn});
-				FlxTween.tween(Main.fpsVar, {alpha: 0}, .5, {ease: FlxEase.circIn});
-				FlxTween.tween(FlxG.sound.music, {volume: 0}, 2, {ease: FlxEase.circIn});
-
-				new FlxTimer().start(2, function(tmr:FlxTimer) {
-					FlxG.camera.alpha = 0;
-					new FlxTimer().start(1, function (tmr:FlxTimer) {
-							#if VIDEOS_ALLOWED
-							var foundFile:Bool = false;
-							var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/' + "penkaru" + '.' + Paths.VIDEO_EXT); #else ''; #end
-							#if sys
-							if (FileSystem.exists(fileName))
-							{
-								foundFile = true;
-							}
-							#end
-
-							if (!foundFile) {
-								fileName = Paths.video("penkaru");
-								if (#if sys FileSystem.exists(fileName) #else OpenFlAssets.exists(fileName) #end)
-									foundFile = true;
-
-								if (foundFile) {
-									Lib.application.window.title = "*  You look inside the drawer and find a old vhs of a dance you used to do in highschool. *  Did this ever exist? When did you take this video?";
-									Lib.application.window.resizable = false;
-									FlxG.resizeWindow(1280, 720);
-
-									FlxG.sound.volume = 1;
-									FlxG.sound.soundTray.visual = false;
-									FlxG.sound.soundTray.show(true);
-
-									// Am I Evil??? (i do not care about streamer mode)
-									CppAPI.removeWindowIcon();
-									FlxG.fullscreen = FlxG.autoPause = false;
-									Lib.application.window.onClose.add(function () {
-										Lib.application.window.onClose.cancel();
-									});
-									
-									(new FlxVideo(fileName)).finishCallback = function() {Sys.exit(0);}
-									(new FlxTimer()).start(52, function (tmr:FlxTimer) {
-										CppAPI._setWindowLayered();
-					
-										var numTween:NumTween = FlxTween.num(1, 0, 3, {
-											onComplete: function(twn:FlxTween) {
-												Sys.exit(0);
-										}});
-					
-										numTween.onUpdate = function(twn:FlxTween)
-										{
-											#if windows
-											CppAPI.setWindowOppacity(numTween.value);
-											#end
-										}
-									});
-								}
-								else
-									FlxG.log.warn('Couldnt find video file: ' + fileName);
-								#end
-						}
-					});
-				});
-			});
-		}
+		#if VIDEOS_ALLOWED
+	
+		#end
 
 		penkStage++;
 	}
 }
 
+#if VIDEOS_ALLOWED
 class VideoSubState extends MusicBeatSubstate
 {
 	public function new(file:String){
@@ -1127,3 +1058,4 @@ class VideoSubState extends MusicBeatSubstate
 		super();
 	}
 }
+#end

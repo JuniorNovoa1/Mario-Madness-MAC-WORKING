@@ -41,6 +41,10 @@ class Main extends Sprite {
 
 	public function new() {
 		super();
+		#if html5
+		gameWidth = 1280;
+		gameHeight = 720;
+		#end
 
 		if (stage != null) {
 			init();

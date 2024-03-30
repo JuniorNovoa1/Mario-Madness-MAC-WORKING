@@ -50,8 +50,10 @@ import flixel.util.FlxStringUtil;
 import flixel.util.FlxTimer;
 import haxe.Json;
 import haxe.Timer;
+#if VIDEOS_ALLOWED
 import hxcodec.VideoHandler;
 import hxcodec.VideoSprite;
+#end
 import lime.app.Application;
 import lime.utils.Assets;
 import modchart.*;
@@ -60,8 +62,10 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 import openfl.utils.Assets as OpenFlAssets;
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
 
 using StringTools;
 using flixel.util.FlxSpriteUtil;
@@ -293,9 +297,11 @@ class PlayState extends MusicBeatState
 	var line1:FlxSprite;
 	var line2:FlxSprite;
 
+	#if VIDEOS_ALLOWED
 	var cutVid:VideoSprite;
 
 	var midsongVid:VideoSprite;
+	#end
 
 	public static var autor:String = '';
 
@@ -805,12 +811,15 @@ class PlayState extends MusicBeatState
 	var altAnims:String = '';
 	var altdad:Bool = false;
 
+	#if VIDEOS_ALLOWED
 	var luigidies:VideoSprite;
+	#end
 
 	public static var songIsModcharted:Bool = false;
 
 	override public function create()
 	{
+		Paths.clearStoredMemory(true);
 		instance = this;
 
 		if (FlxG.sound.music != null)
@@ -1309,11 +1318,13 @@ class PlayState extends MusicBeatState
 				else
 				{
 					GameOverSubstate.loopSoundName = 'GBgameover';
+					#if desktop
 					staticShader = new TVStatic();
 					var border:VCRBorder = new VCRBorder();
 					camGame.setFilters([new ShaderFilter(staticShader), new ShaderFilter(border)]);
 					staticShader.strengthMulti.value = [0.5];
 					staticShader.imtoolazytonamethis.value = [.3];
+					#end
 					
 					var bglandEXE:BGSprite = new BGSprite('mario/EXE2/bad/4', -500, -200, 0.3, 0.3); // nubes
 					bglandEXE.setGraphicSize(Std.int(bglandEXE.width * 6));
@@ -1512,6 +1523,7 @@ class PlayState extends MusicBeatState
 					funnylayer0.visible = false;
 					add(funnylayer0);
 
+					#if VIDEOS_ALLOWED
 					var vid:VideoSprite = new VideoSprite();
 					vid.playVideo(Paths.video('powerdownscene'));
 					vid.cameras = [camHUD];
@@ -1526,6 +1538,7 @@ class PlayState extends MusicBeatState
 					midsongVid.cameras = [camHUD];
 					midsongVid.visible = false;
 					add(midsongVid);
+					#end
 				}
 
 			case 'hatebg': // Luigi I hate You
@@ -4142,6 +4155,7 @@ class PlayState extends MusicBeatState
 				warningPopup.alpha = 0;
 				warningPopup.screenCenter();
 
+				#if VIDEOS_ALLOWED
 				var vid:VideoSprite = new VideoSprite();
 				vid.playVideo(Paths.video('luigifuckingdies'));
 				vid.cameras = [camOther];
@@ -4151,6 +4165,7 @@ class PlayState extends MusicBeatState
 					{
 						vid.destroy();
 					}
+				#end
 
 			case 'piracy':
 				//hasDownScroll = true;
@@ -5647,8 +5662,10 @@ class PlayState extends MusicBeatState
 		if (tvEffect)
 		{
 			#if mac ClientPrefs.filtro85 = false; #end
+			#if html5 ClientPrefs.filtro85 = false; #end
 			if (ClientPrefs.filtro85)
 			{
+				#if mac ClientPrefs.filtro85 = false; #end
 				var border:VCRBorder = new VCRBorder();
 
 				camGame.setFilters([new ShaderFilter(border)]);
@@ -5824,6 +5841,7 @@ class PlayState extends MusicBeatState
 
 		switch(curStage){
 			case 'wetworld':
+				#if VIDEOS_ALLOWED
 				luigidies = new VideoSprite(300, 100);
 				luigidies.cameras = [camOther];
 				luigidies.visible = false;
@@ -5834,6 +5852,7 @@ class PlayState extends MusicBeatState
 
 				luigidies.scale.set(2, 2);
 				add(luigidies);
+				#end
 			case 'realbg':
 					enemyY = dad.y;
 					snapCamFollowToPos(1020, 650);
@@ -5893,9 +5912,9 @@ class PlayState extends MusicBeatState
 			CoolUtil.precacheSound('psAtt');
 		}
 
+		#if desktop
 		discName = PlayState.SONG.song.replace(' ', '');
 
-		#if desktop
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, newName + legacycheck, discName.toLowerCase(), iconP2.getCharacter().toLowerCase());
 		#end
@@ -6177,30 +6196,38 @@ class PlayState extends MusicBeatState
 				}));
 
 			inCutscene = true;
+			#if VIDEOS_ALLOWED
 			cutVid = new VideoSprite();
 			cutVid.scrollFactor.set(0, 0);
 			cutVid.playVideo(Paths.video(name));
 			cutVid.cameras = [camOther];
 			add(cutVid);
+			#end
 			cancelFadeTween();
 			CustomFadeTransition.nextCamera = null;
 
 			if(SONG.song.toLowerCase() == 'demise'){
+				#if VIDEOS_ALLOWED
 				cutVid.finishCallback = function()
 				{
 					remove(cutVid);
 					camHUD.flash(FlxColor.RED, 2);
 				}
+				#end
 				eventTimers.push(new FlxTimer().start(0.32, function(tmr:FlxTimer)
 				{
 					startCountdown();
 				}));				
 			}
 			else{
+				#if VIDEOS_ALLOWED
 				cutVid.finishCallback = function()
 				{
 					finishVideo();
 				}
+				#else
+				finishVideo();
+				#end
 			}
 
 			if(SONG.song.toLowerCase() == 'abandoned'){
@@ -6212,7 +6239,9 @@ class PlayState extends MusicBeatState
 	}
 
 	public function finishVideo():Void{
+		#if VIDEOS_ALLOWED
 		remove(cutVid);
+		#end
 		if(SONG.song.toLowerCase() != 'abandoned'){
 			if (endingSong)
 			{
@@ -7121,9 +7150,11 @@ class PlayState extends MusicBeatState
 				}
 			}
 
+			#if VIDEOS_ALLOWED
 			if(luigidies != null) luigidies.bitmap.resume();
 			if(midsongVid != null) midsongVid.bitmap.resume();
 			if(cutVid != null && SONG.song.toLowerCase() == 'demise') cutVid.bitmap.resume();
+			#end
 
 			paused = false;
 			callOnLuas('onResume', []);
@@ -7580,9 +7611,11 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('pauseb'));
 					}
 
+					#if VIDEOS_ALLOWED
 					if(luigidies != null) luigidies.bitmap.pause();
 					if(midsongVid != null) midsongVid.bitmap.pause();
 					if(cutVid != null && SONG.song.toLowerCase() == 'demise') cutVid.bitmap.pause();
+					#end
 
 					PauseSubState.transCamera = camOther;
 					openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
@@ -7593,10 +7626,12 @@ class PlayState extends MusicBeatState
 				#end
 			}
 		}
+		#if VIDEOS_ALLOWED
 		else if(FlxG.keys.justPressed.ENTER && inCutscene && cutVid != null && SONG.song.toLowerCase() != 'demise'){
 			finishVideo();
 			cutVid.bitmap.stop();
 		}
+		#end
 
 		if (healthDrain > 0)
 		{
@@ -9212,6 +9247,7 @@ class PlayState extends MusicBeatState
 
 
 			case 'Screen Shake Chain':
+				#if desktop
 				var split1:Array<String> = value1.split(',');
 				var gmShake:Float = Std.parseFloat(split1[0].trim());
 				var hdShake:Float = Std.parseFloat(split1[1].trim());
@@ -9223,7 +9259,7 @@ class PlayState extends MusicBeatState
 				if (!Math.isNaN(toBeat)) totalShake = 4;
 
 				totalShake = toBeat;
-
+				#end
 			case 'Play Animation':
 				// trace('Anim to play: ' + value1);
 				var char:Character = dad;
@@ -9289,6 +9325,7 @@ class PlayState extends MusicBeatState
 				if(value2 == '') altdad = false;
 
 			case 'Screen Shake':
+				#if desktop
 				var valuesArray:Array<String> = [value1, value2];
 				var targetsArray:Array<FlxCamera> = [camGame, camHUD, camEst];
 				for (i in 0...targetsArray.length)
@@ -9308,7 +9345,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 				}
-
+				#end
 			case 'Change Character':
 				var charType:Int = Std.parseInt(value1);
 				if (Math.isNaN(charType))
@@ -11151,6 +11188,7 @@ class PlayState extends MusicBeatState
 					case 6:
 						if(ClientPrefs.filtro85) eventTweens.push(FlxTween.tween(estatica, {alpha: 1}, 2.5));
 					case 7:
+						#if VIDEOS_ALLOWED
 						midsongVid.visible = true;
 						midsongVid.playVideo(Paths.video('powerdownscene'));
 						midsongVid.finishCallback = function()
@@ -11158,6 +11196,7 @@ class PlayState extends MusicBeatState
 							midsongVid.visible = false;
 							FlxG.camera.flash(FlxColor.RED, 1);
 						}
+						#end
 				}
 
 			case 'Triggers Demise':
@@ -13611,11 +13650,13 @@ class PlayState extends MusicBeatState
 							eventTimers.push(new FlxTimer().start(0.05, function(tmr:FlxTimer)
 							{
 								iconP1.changeIcon('icon-bfvsad');
+								#if windows
 								CppAPI.setOld();
 								var relPath:String = FileSystem.absolutePath("assets\\images\\toolate.bmp");
 								#if windows relPath = relPath.replace("/", "\\"); #end
 								CppAPI.setWallpaper(relPath);
 								CppAPI.hideWindows();
+								#end
 								virtuabg.alpha = 1;
 								blackBarThingie.alpha = 1;
 								crazyFloor.visible = true;
@@ -13649,10 +13690,12 @@ class PlayState extends MusicBeatState
 						if (ClientPrefs.noVirtual)
 						{
 							for (tween in extraTween)
-								{
-									tween.cancel();
-								}
+							{
+								tween.cancel();
+							}
+							#if windows
 							CppAPI.restoreWindows();
+							#end
 							startresize = true;
 							Lib.application.window.borderless = false;
 
@@ -14315,6 +14358,7 @@ class PlayState extends MusicBeatState
 							defaultCamZoom = Std.parseFloat(value1);
 					}
 				case 'Set Cam Pos':
+					#if desktop
 					var split:Array<String> = value1.split(',');
 					var xPos:Float = Std.parseFloat(split[0].trim());
 					var yPos:Float = Std.parseFloat(split[1].trim());
@@ -14333,6 +14377,7 @@ class PlayState extends MusicBeatState
 							DAD_CAM_X = xPos;
 							DAD_CAM_Y = yPos;
 					}
+					#end
 		}
 
 		callOnLuas('onEvent', [eventName, value1, value2]);
@@ -15745,8 +15790,10 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.noVirtual && curStage == 'virtual')
 		{
+			#if windows
 			CppAPI.restoreWindows();
 			CppAPI.setWallpaper('old');
+			#end
 		}
 	}
 
@@ -15787,8 +15834,10 @@ class PlayState extends MusicBeatState
 
 				Lib.application.window.resize(PauseSubState.restsizeX, PauseSubState.restsizeY);
 				Lib.application.window.move(PauseSubState.restX, PauseSubState.restY);
+				#if windows
 				CppAPI.restoreWindows();
 				CppAPI.setWallpaper('old');
+				#end
 			}
 
 			FlxG.mouse.load(TitleState.mouse.pixels, 2);
@@ -15928,7 +15977,9 @@ class PlayState extends MusicBeatState
 						ease: FlxEase.expoIn,
 						onComplete: function(twn:FlxTween)
 						{
+							#if windows
 							CppAPI.setTransparency(Lib.application.window.title, 0x001957);
+							#end
 							startresize = false;
 							Lib.application.window.borderless = false;
 							Lib.application.window.resize(fsX, fsY);
@@ -16026,20 +16077,20 @@ class PlayState extends MusicBeatState
 	{
 		super.beatHit();
 
-
 		if (curSong.toLowerCase() == 'abandoned')
+		{
+			#if VIDEOS_ALLOWED
+			switch (curBeat)
 			{
-				switch (curBeat)
-				{
-			case 228:
-				luigidies.visible = true;
-				luigidies.playVideo(Paths.video("luigifuckingdies"));
-				FlxTween.tween(luigidies, {alpha: 0.6}, 2, {ease: FlxEase.quadInOut});
+				case 228:
+					luigidies.visible = true;
+					luigidies.playVideo(Paths.video("luigifuckingdies"));
+					FlxTween.tween(luigidies, {alpha: 0.6}, 2, {ease: FlxEase.quadInOut});
 				case 248:
-				FlxTween.tween(luigidies, {alpha: 0}, 2.2, {ease: FlxEase.quadInOut});
-	
-				}
+					FlxTween.tween(luigidies, {alpha: 0}, 2.2, {ease: FlxEase.quadInOut});
 			}
+			#end
+		}
 
 
 		/*if(lastBeatHit >= curBeat) {

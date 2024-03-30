@@ -60,7 +60,7 @@ class AngelShader extends FlxShader
 		
 		amp = stronk;
 
-		for (int i = 0; i < 3; i++) {
+		for (float i = 0.0; i < 3; i++) {
 
 			vec2 size = openfl_TextureSize.xy / pixel;
 			vec2 uv = floor(openfl_TextureCoordv.xy * size) / size;

@@ -19,11 +19,15 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.misc.NumTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+#if VIDEOS_ALLOWED
 import hxcodec.VideoHandler;
 import hxcodec.VideoSprite;
+#end
 import lime.net.curl.CURLCode;
 import openfl.filters.ShaderFilter;
+#if sys
 import sys.FileSystem;
+#end
 
 using StringTools;
 #if desktop
@@ -52,7 +56,9 @@ class StoryMenuState extends MusicBeatSubstate
 
 	var opUp:FlxObject;
 	var opDown:FlxObject;
+	#if VIDEOS_ALLOWED
 	var vid:VideoSprite;
+	#end
 
 	var staticShader:TVStatic;
 	var dumbTween:FlxTween;
@@ -102,7 +108,9 @@ class StoryMenuState extends MusicBeatSubstate
 		lineSpr.scrollFactor.set(1.2, 1.2);
 		add(lineSpr);
 		
+		#if desktop
 		dumbTween = FlxTween.num(2.0, 0.8, 4, {ease: FlxEase.expoOut}, (v:Float) -> {MainMenuState.instance.bloom.dim.value = [v];});
+		#end
 
 		selSpr = new FlxSprite().loadGraphic(Paths.image('modstuff/storymode/text1'));
 		selSpr.antialiasing = ClientPrefs.globalAntialiasing;
@@ -182,12 +190,14 @@ class StoryMenuState extends MusicBeatSubstate
 		overlay.alpha = 0;
 		add(overlay);
 		
+		#if desktop
 		@:privateAccess FlxG.camera._filters.insert(0, new ShaderFilter(staticShader = new TVStatic()));
 		staticShader.strengthMulti.value = [0.5];
 		staticShader.imtoolazytonamethis.value = [.3];
 
 		dumbTween2 = FlxTween.num(0, 0.5, 4, {ease: FlxEase.expoOut}, (v:Float) -> {staticShader.strengthMulti.value = [v];});
-		
+		#end
+
 		flicker = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		flicker.scrollFactor.set(0, 0);
 		flicker.updateHitbox();
@@ -222,10 +232,11 @@ class StoryMenuState extends MusicBeatSubstate
 	override function destroy() {
 		super.destroy();
 
+		#if desktop
 		dumbTween.cancel();
 		MainMenuState.instance.bloom.dim.value = [2.0];
-
 		dumbTween2.cancel();
+		#end
 	}
 
 	var tottalTimer:Float = 0;
@@ -238,14 +249,18 @@ class StoryMenuState extends MusicBeatSubstate
 		}
 		else if(controls.ACCEPT && inCutscene){
 			finishVideo();
+			#if VIDEOS_ALLOWED
 			vid.bitmap.stop();
+			#end
 		}
 
 		charsShader.update(elapsed);
 		chars.angle = 2 * Math.sin(tottalTimer/2);
 		chars.offset.y = 3 * Math.sin(tottalTimer+.67);
 
+		#if desktop
 		staticShader.iTime.value = [tottalTimer];
+		#end
 
 		overlay.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
 		flicker.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
@@ -305,8 +320,10 @@ class StoryMenuState extends MusicBeatSubstate
 				}
 	
 				if(FlxG.mouse.justPressed && FlxG.mouse.overlaps(spr)){
+					#if VIDEOS_ALLOWED
 					quieto = false;
 					startVideo(cutscenes[spr.ID]);
+					#end
 				}
 			});
 		}
@@ -339,46 +356,48 @@ class StoryMenuState extends MusicBeatSubstate
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 		FlxG.camera.flash(FlxColor.RED, 0.5);
 		new FlxTimer().start(1, function(tmr:FlxTimer)
-			{
-		FlxG.sound.play(Paths.sound('riser'), 1);
-		var bloom:BloomShader = MainMenuState.instance.bloom;
-		bloom.Size.value = [0];
-		bloom.dim.value = [.8];
+		{
+			FlxG.sound.play(Paths.sound('riser'), 1);
+			#if desktop
+			var bloom:BloomShader = MainMenuState.instance.bloom;
+			bloom.Size.value = [0];
+			bloom.dim.value = [.8];
 
-		var twn1:NumTween;
-		var twn2:NumTween;
+			var twn1:NumTween;
+			var twn2:NumTween;
 
-		twn1 = FlxTween.num(0, 2, 2, {
-			onUpdate: (_) -> {
-				bloom.Size.value = [twn1.value];
-			}
-		});
+			twn1 = FlxTween.num(0, 2, 2, {
+				onUpdate: (_) -> {
+					bloom.Size.value = [twn1.value];
+				}
+			});
 
-		twn2 = FlxTween.num(.8, 0.1, 2, {
-			onUpdate: (_) -> {
-				bloom.dim.value = [twn2.value];
-			}
-		});
+			twn2 = FlxTween.num(.8, 0.1, 2, {
+				onUpdate: (_) -> {
+					bloom.dim.value = [twn2.value];
+				}
+			});
+			#end
 
-		for (i in 0...10){
-			new FlxTimer().start(0.2 * i, function(tmr:FlxTimer)
+			for (i in 0...10){
+				new FlxTimer().start(0.2 * i, function(tmr:FlxTimer)
 				{
 					FlxG.camera.shake(0.0004 * i, 0.2);
 				});
-		}
-		FlxTween.tween(FlxG.camera, {zoom: 1.3}, 2, {ease: FlxEase.circIn});
-		FlxTween.tween(FlxG.sound.music, {volume: 0}, 2, {ease: FlxEase.circIn});
-		PlayState.storyPlaylist = ['Its a me', 'Starman Slaughter'];
-		PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase(), PlayState.storyPlaylist[0].toLowerCase());
-		PauseSubState.tengo = 'its-a-me';
-		PlayState.storyWeek = 0;
-		PlayState.campaignScore = 0;
-		PlayState.campaignMisses = 0;
-		new FlxTimer().start(3, function(tmr:FlxTimer)
-		{
-			FlxG.camera.alpha = 0;
-			LoadingState.loadAndSwitchState(new PlayState(), true);
-		});
+			}
+			FlxTween.tween(FlxG.camera, {zoom: 1.3}, 2, {ease: FlxEase.circIn});
+			FlxTween.tween(FlxG.sound.music, {volume: 0}, 2, {ease: FlxEase.circIn});
+			PlayState.storyPlaylist = ['Its a me', 'Starman Slaughter'];
+			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase(), PlayState.storyPlaylist[0].toLowerCase());
+			PauseSubState.tengo = 'its-a-me';
+			PlayState.storyWeek = 0;
+			PlayState.campaignScore = 0;
+			PlayState.campaignMisses = 0;
+			new FlxTimer().start(3, function(tmr:FlxTimer)
+			{
+				FlxG.camera.alpha = 0;
+				LoadingState.loadAndSwitchState(new PlayState(), true);
+			});
 		});
 	}
 
@@ -394,17 +413,23 @@ class StoryMenuState extends MusicBeatSubstate
 				inCutscene = true;
 				MainMenuState.instance.lerpCamZoom = false;
 				FlxG.camera.zoom = 1;
+				#if VIDEOS_ALLOWED
 				vid = new VideoSprite();
 				vid.scrollFactor.set(0, 0);
 				vid.playVideo(Paths.video(name));
 				
 				add(vid);
+				#end
 
 				FlxG.camera.filtersEnabled = false;
+				#if VIDEOS_ALLOWED
 				vid.finishCallback = function()
 				{
 					finishVideo();
 				}
+				#else
+				finishVideo();
+				#end
 				return;
 			}
 			);
@@ -413,7 +438,9 @@ class StoryMenuState extends MusicBeatSubstate
 
 	public function finishVideo():Void{
 		FlxG.camera.filtersEnabled = true;
+		#if VIDEOS_ALLOWED
 		vid.destroy();
+		#end
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				remove(bg);
