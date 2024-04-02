@@ -108,7 +108,7 @@ class StoryMenuState extends MusicBeatSubstate
 		lineSpr.scrollFactor.set(1.2, 1.2);
 		add(lineSpr);
 		
-		#if desktop
+		#if SHADERS_ALLOWED
 		dumbTween = FlxTween.num(2.0, 0.8, 4, {ease: FlxEase.expoOut}, (v:Float) -> {MainMenuState.instance.bloom.dim.value = [v];});
 		#end
 
@@ -190,7 +190,7 @@ class StoryMenuState extends MusicBeatSubstate
 		overlay.alpha = 0;
 		add(overlay);
 		
-		#if desktop
+		#if SHADERS_ALLOWED
 		@:privateAccess FlxG.camera._filters.insert(0, new ShaderFilter(staticShader = new TVStatic()));
 		staticShader.strengthMulti.value = [0.5];
 		staticShader.imtoolazytonamethis.value = [.3];
@@ -232,7 +232,7 @@ class StoryMenuState extends MusicBeatSubstate
 	override function destroy() {
 		super.destroy();
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		dumbTween.cancel();
 		MainMenuState.instance.bloom.dim.value = [2.0];
 		dumbTween2.cancel();
@@ -258,7 +258,7 @@ class StoryMenuState extends MusicBeatSubstate
 		chars.angle = 2 * Math.sin(tottalTimer/2);
 		chars.offset.y = 3 * Math.sin(tottalTimer+.67);
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		staticShader.iTime.value = [tottalTimer];
 		#end
 
@@ -358,7 +358,7 @@ class StoryMenuState extends MusicBeatSubstate
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			FlxG.sound.play(Paths.sound('riser'), 1);
-			#if desktop
+			#if SHADERS_ALLOWED
 			var bloom:BloomShader = MainMenuState.instance.bloom;
 			bloom.Size.value = [0];
 			bloom.dim.value = [.8];

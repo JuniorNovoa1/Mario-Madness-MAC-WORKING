@@ -59,7 +59,7 @@ class PatchNotes extends MusicBeatState
 		#end
 		FlxG.mouse.visible = true;
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		FlxG.camera.setFilters([new ShaderFilter(ntsc = new NTSCGlitch(0.4)), new ShaderFilter(staticShader = new TVStatic())]);
 		#end
 

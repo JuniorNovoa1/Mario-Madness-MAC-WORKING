@@ -1318,7 +1318,7 @@ class PlayState extends MusicBeatState
 				else
 				{
 					GameOverSubstate.loopSoundName = 'GBgameover';
-					#if desktop
+					#if SHADERS_ALLOWED
 					staticShader = new TVStatic();
 					var border:VCRBorder = new VCRBorder();
 					camGame.setFilters([new ShaderFilter(staticShader), new ShaderFilter(border)]);
@@ -5661,11 +5661,9 @@ class PlayState extends MusicBeatState
 		}
 		if (tvEffect)
 		{
-			#if mac ClientPrefs.filtro85 = false; #end
-			#if html5 ClientPrefs.filtro85 = false; #end
+			#if !SHADERS_ALLOWED ClientPrefs.filtro85 = false; #end //easiest way of doing this
 			if (ClientPrefs.filtro85)
 			{
-				#if mac ClientPrefs.filtro85 = false; #end
 				var border:VCRBorder = new VCRBorder();
 
 				camGame.setFilters([new ShaderFilter(border)]);

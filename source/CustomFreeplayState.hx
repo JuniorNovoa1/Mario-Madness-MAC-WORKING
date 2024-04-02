@@ -360,7 +360,7 @@ class FreeplaySubState extends MusicBeatSubstate
 		//CustomFreeplayState.estatica.animation.play('idle');
 		curSelected = 0;
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		bloom = MainMenuState.instance.bloom;
 		bloom.Size.value = [0];
 		#end
@@ -600,7 +600,7 @@ class FreeplaySubState extends MusicBeatSubstate
 		#end
 
 		if (ClientPrefs.flashing && bloom != null) {
-			#if desktop
+			#if SHADERS_ALLOWED
 			bloom.Size.value = [2];
 			bloom.dim.value = [0.1];
 

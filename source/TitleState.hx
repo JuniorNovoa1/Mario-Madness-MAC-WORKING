@@ -151,7 +151,7 @@ class TitleState extends MusicBeatState {
 
 		Conductor.changeBPM(45.593);
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		bloom = new BloomShader();
 		bloom.Size.value = [3.0];
 

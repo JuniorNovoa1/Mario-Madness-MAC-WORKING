@@ -324,7 +324,7 @@ class WarpState extends MusicBeatState
 		pibemapa.animation.play('idle');
 		screenText.text = canciones[curSelected][0].toUpperCase();
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		vcr = new CRTShader();
 		FlxG.camera.setFilters([new ShaderFilter(vcr)]);
 		#end
@@ -1108,7 +1108,7 @@ class WorldState extends MusicBeatSubstate
 				
 
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		effect = new SMWPixelBlurShader();
 		vcr = new CRTShader();
 		camWorld.setFilters([new ShaderFilter(effect.shader), new ShaderFilter(vcr)]);
@@ -1379,7 +1379,7 @@ class WorldState extends MusicBeatSubstate
 								
 							}
 						FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.7);
-						#if desktop
+						#if SHADERS_ALLOWED
 						FlxTween.num(SMWPixelBlurShader.DEFAULT_STRENGTH, 20, 0.7, function(v)
 							{
 								effect.setStrength(v, v);
@@ -2296,7 +2296,7 @@ class UltraState extends MusicBeatSubstate
 											}
 										FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.7);
 										FlxTween.tween(fire, {volume: 0}, 0.7);
-										#if desktop
+										#if SHADERS_ALLOWED
 										FlxTween.num(SMWPixelBlurShader.DEFAULT_STRENGTH, 20, 0.7, function(v)
 											{
 												effect.setStrength(v, v);

@@ -207,7 +207,7 @@ class MainMenuState extends MusicBeatState {
 
 		FlxG.camera.pixelPerfectRender = false;
 
-		#if desktop
+		#if SHADERS_ALLOWED
 		bloom = new BloomShader();
 		bloom.Size.value = [1];
 		FlxG.camera.setFilters([new ShaderFilter(ntsc = new NTSCGlitch(0.4)), new ShaderFilter(bloom)]);
@@ -671,7 +671,7 @@ class MainMenuState extends MusicBeatState {
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 
 		if (ClientPrefs.flashing && bloom != null) {
-			#if desktop
+			#if SHADERS_ALLOWED
 			bloom.Size.value = [45];
 			bloom.dim.value = [0.3];
 
@@ -805,7 +805,7 @@ class MainMenuState extends MusicBeatState {
 			star.x = Math.PI + (star.width * 1.25); star.alpha = 0; // TO STOP STUPID FUCKING GLITCH
 			FlxTween.tween(star, {x: star.x - (star.width * 1.25), alpha: 1}, 0.4, {ease: FlxEase.circOut, startDelay: 0.1 + (0.1 * star.ID)});
 		}
-		#if desktop
+		#if SHADERS_ALLOWED
 		FlxG.camera.setFilters([new ShaderFilter(ntsc), new ShaderFilter(bloom)]);
 		#end
 
