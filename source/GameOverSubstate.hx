@@ -15,7 +15,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-
+import lime.utils.Assets;
 class GameOverSubstate extends MusicBeatSubstate
 {
 	var bf:Boyfriend;
@@ -83,7 +83,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		Conductor.songPosition = 0;
 		Conductor.changeBPM(50);
 
-		voiceline = new FlxSound().loadEmbedded(Paths.sound(PlayState.curStage + '/line' + FlxG.random.int(1, vaCount)));
+		if (Assets.exists("assets/sounds/" + PlayState.curStage + '/line$vaCount'))
+			voiceline = new FlxSound().loadEmbedded(Paths.sound(PlayState.curStage + '/line' + FlxG.random.int(1, vaCount)));
 
 		bf = new Boyfriend(x, y, characterName);
 		add(bf);
@@ -825,7 +826,8 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		if (PlayState.curStage != 'warioworld' && PlayState.curStage != 'racing' && PlayState.curStage != 'virtual')
 		{
-			FlxG.sound.playMusic(Paths.music(loopSoundName), volume);
+			if (Assets.exists("assets/music" + loopSoundName))
+				FlxG.sound.playMusic(Paths.music(loopSoundName), volume);
 			bf.startedDeath = true;
 			if (!isEnding && bf.animOffsets.exists('deathLoop')){
 				bf.playAnim('deathLoop', true);

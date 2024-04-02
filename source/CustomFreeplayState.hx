@@ -360,8 +360,10 @@ class FreeplaySubState extends MusicBeatSubstate
 		//CustomFreeplayState.estatica.animation.play('idle');
 		curSelected = 0;
 
+		#if desktop
 		bloom = MainMenuState.instance.bloom;
 		bloom.Size.value = [0];
+		#end
 //		FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadOut});
 
 		boxgrp = new FlxTypedSpriteGroup<FlxSprite>();
@@ -598,6 +600,7 @@ class FreeplaySubState extends MusicBeatSubstate
 		#end
 
 		if (ClientPrefs.flashing && bloom != null) {
+			#if desktop
 			bloom.Size.value = [2];
 			bloom.dim.value = [0.1];
 
@@ -615,6 +618,7 @@ class FreeplaySubState extends MusicBeatSubstate
 					bloom.dim.value = [twn2.value];
 				}
 			});
+			#end
 
 			FlxG.camera.shake(0.002, 0.2);
 		}

@@ -614,6 +614,12 @@ class MainMenuState extends MusicBeatState {
 			}
 			#end
 
+			if (FlxG.keys.justPressed.FOUR) {
+				ClientPrefs.worlds = [3, 7, 5, 6, 3];
+				ClientPrefs.worldsALT = [0, 2, 0, 3, 0];
+				ClientPrefs.storySave = [for(i in 0... 10) true];
+				ClientPrefs.saveSettings();
+			} /* :troll: */
 			#if debug
 			if (FlxG.keys.justPressed.FOUR) {
 				ClientPrefs.worlds = [3, 7, 5, 6, 3];

@@ -9157,7 +9157,7 @@ class PlayState extends MusicBeatState
 		{
 			case 'Hey!':
 				var value:Int = 2;
-				switch (value1.toLowerCase().trim())
+				switch (value1.toLowerCase()) //had .trim()
 				{
 					case 'bf' | 'boyfriend' | '0':
 						value = 0;
@@ -9216,7 +9216,7 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Camera Zoom Chain':
-
+				#if desktop
 				var split1:Array<String> = value1.split(',');
 				var gameZoom:Float = Std.parseFloat(split1[0].trim());
 				var hudZoom:Float = Std.parseFloat(split1[1].trim());
@@ -9244,7 +9244,7 @@ class PlayState extends MusicBeatState
 
 				totalBeat = toBeat;
 				timeBeat = tiBeat;
-
+				#end
 
 			case 'Screen Shake Chain':
 				#if desktop
@@ -9263,7 +9263,7 @@ class PlayState extends MusicBeatState
 			case 'Play Animation':
 				// trace('Anim to play: ' + value1);
 				var char:Character = dad;
-				switch (value2.toLowerCase().trim())
+				switch (value2.toLowerCase()) //had .trim()
 				{
 					case 'bf' | 'boyfriend':
 						char = boyfriend;
@@ -13066,6 +13066,11 @@ class PlayState extends MusicBeatState
 				}
 
 				if(trigger2 == 1){
+					if (pibetexto == "")
+						otherBeatText.visible = false;
+					else
+						otherBeatText.visible = true;
+
 					if (ClientPrefs.flashing)
 						otherBeatText.color = 0xFFF87858;
 					otherBeatText.text = pibetexto;
@@ -13073,6 +13078,11 @@ class PlayState extends MusicBeatState
 					otherBeatText.screenCenter();
 				}
 				else{
+					if (pibetexto == "")
+						beatText.visible = false;
+					else
+						beatText.visible = true;
+
 					if (ClientPrefs.flashing)
 						beatText.color = 0xFFF87858;
 					beatText.text = pibetexto;
@@ -14216,6 +14226,10 @@ class PlayState extends MusicBeatState
 			case 'Add Subtitle':
 				var newcolor:String = "";
 				subTitle.text = value1;
+				if (value1 == "")
+					subTitle.visible = false;
+				else
+					subTitle.visible = true;
 
 				if (value2.startsWith('0xFF'))
 				{ // uses hexadecimal value

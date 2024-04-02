@@ -1379,6 +1379,7 @@ class WorldState extends MusicBeatSubstate
 								
 							}
 						FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.7);
+						#if desktop
 						FlxTween.num(SMWPixelBlurShader.DEFAULT_STRENGTH, 20, 0.7, function(v)
 							{
 								effect.setStrength(v, v);
@@ -1400,6 +1401,24 @@ class WorldState extends MusicBeatSubstate
 								}
 								FlxG.sound.music.volume = 0;
 							});
+						#else
+						new FlxTimer().start(1, function(tmr:FlxTimer)
+						{
+							WarpState.blackScreen.alpha = 1;
+							FlxG.camera.visible = false;
+							CustomFadeTransition.nextCamera = null;
+							if(thesong == "no-party"){
+								FlxG.mouse.visible = true;
+								FlxG.switchState(new PartyState());
+							}else if(thesong == "paranoia"){
+								FlxG.camera.visible = true;
+								openSubState(new VirtualState());
+							}else{
+								LoadingState.loadAndSwitchState(new PlayState());
+							}
+							FlxG.sound.music.volume = 0;
+						});
+						#end
 					}
 				}}
 			}
@@ -1729,7 +1748,7 @@ class WorldState extends MusicBeatSubstate
 		var newPos:Int = FlxG.random.int(0, 6);
 		var fishTimer:Float = FlxG.random.int(6, 10);
 
-		if(bgworld2.x == fishPos[newPos][0]){
+		if(bgworld2.x == fishPos[newPos].x){
 			fish();
 			return;
 		}
@@ -2277,6 +2296,7 @@ class UltraState extends MusicBeatSubstate
 											}
 										FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.7);
 										FlxTween.tween(fire, {volume: 0}, 0.7);
+										#if desktop
 										FlxTween.num(SMWPixelBlurShader.DEFAULT_STRENGTH, 20, 0.7, function(v)
 											{
 												effect.setStrength(v, v);
@@ -2290,6 +2310,16 @@ class UltraState extends MusicBeatSubstate
 												LoadingState.loadAndSwitchState(new PlayState());
 												FlxG.sound.music.volume = 0;
 											});
+										#else
+										new FlxTimer().start(1, function(tmr:FlxTimer)
+										{
+											WarpState.blackScreen.alpha = 1;
+											FlxG.camera.visible = false;
+											CustomFadeTransition.nextCamera = null;
+											LoadingState.loadAndSwitchState(new PlayState());
+											FlxG.sound.music.volume = 0;
+										});
+										#end
 									});
 							});
 					});
